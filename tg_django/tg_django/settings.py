@@ -17,7 +17,7 @@ from environs import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
-sys.path.append('/OneDrive/Рабочий стол/DIY_bot')
+sys.path.append('/OneDrive/Рабочий стол/DIY_bot')  # исправить
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
