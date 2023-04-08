@@ -2,6 +2,9 @@ from django.db import models
 
 
 class TimeBasedModel(models.Model):
+    class Meta:
+        abstract = True
+
     created_at = models.DateTimeField(
         'Дата создания',
         auto_now_add=True,
@@ -14,11 +17,12 @@ class TimeBasedModel(models.Model):
         blank=True,
     )
 
-    class Meta:
-        abstract = True
-
 
 class Profile(TimeBasedModel):
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
     telegram_id = models.BigIntegerField(
         'Id-телеграма',
         unique=True,
@@ -39,6 +43,7 @@ class Profile(TimeBasedModel):
         'Псевдоним',
         max_length=100,
         unique=True,
+        null=True
     )
     email = models.EmailField(
         'Почта',
@@ -51,12 +56,16 @@ class Profile(TimeBasedModel):
         blank=True,
     )
 
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+    def __str__(self):
+        return f'{self.username}'
 
 
 class Lesson(TimeBasedModel):
+    class Meta:
+        ordering = ('-created_at', '-updated_at')
+        verbose_name = 'Урок'
+        verbose_name_plural = 'Уроки'
+
     id = models.AutoField(
         primary_key=True,
     )
@@ -74,9 +83,10 @@ class Lesson(TimeBasedModel):
     description = models.TextField(
         'Описание урока',
     )
-    img_id = models.CharField(
+    photo_id = models.CharField(
         'Id картинки',
-        max_length=100,
+        max_length=200,
+        default='AgACAgIAAxkBAAOlZDBAK24zrhv8PuXvI8Groa-CfGUAAqnFMRvKcIFJoV0paVg5cyQBAAMCAAN4AAMvBA',
         null=True,
         blank=True,
     )
@@ -84,13 +94,15 @@ class Lesson(TimeBasedModel):
         'URL-telegraph урока',
     )
 
-    class Meta:
-        ordering = ('-created_at', '-updated_at')
-        verbose_name = 'Урок'
-        verbose_name_plural = 'Уроки'
+    def __str__(self):
+        return f'{self.author} - {self.title}'
 
 
 class StatusLesson(TimeBasedModel):
+    class Meta:
+        verbose_name = 'Статус'
+        verbose_name_plural = 'Статусы'
+
     id = models.AutoField(
         primary_key=True,
     )
@@ -117,6 +129,5 @@ class StatusLesson(TimeBasedModel):
         default=False,
     )
 
-    class Meta:
-        verbose_name = 'Статус'
-        verbose_name_plural = 'Статусы'
+    def __str__(self):
+        return f'{self.profile} - {self.lesson}'

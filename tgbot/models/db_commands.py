@@ -18,15 +18,15 @@ def select_users(telegram_id=None, username='', first_name='', last_name=''):
 
 
 @sync_to_async
-def add_user(telegram_id, username, first_name='', last_name='', email='', phone=''):
+def add_user(telegram_id, username, first_name='', last_name='', email='', number=''):
     try:
-        Profile(
+        return Profile(
             telegram_id=int(telegram_id),
             username=username,
             first_name=first_name,
             last_name=last_name,
             email=email,
-            phone=phone
+            number=number,
         ).save()
     except Exception as err:
         return select_users(telegram_id=int(telegram_id))
@@ -35,10 +35,14 @@ def add_user(telegram_id, username, first_name='', last_name='', email='', phone
 @sync_to_async
 def get_lessons(query=''):
     lessons = Lesson.objects.prefetch_related().filter(
-        author=query,
+        author__username__contains=query,
     ) | Lesson.objects.filter(
-        title=query,
+        author__first_name__contains=query,
     ) | Lesson.objects.filter(
-        description=query,
+        author__last_name__contains=query,
+    ) | Lesson.objects.filter(
+        title__contains=query,
+    ) | Lesson.objects.filter(
+        description__contains=query,
     )
     return lessons

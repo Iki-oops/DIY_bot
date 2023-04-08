@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
-from tgbot.models import db_commands as commands
+from tgbot.models.db_commands import add_user
 
 
 class UsersManageMiddleware(BaseMiddleware):
@@ -12,6 +12,6 @@ class UsersManageMiddleware(BaseMiddleware):
             message.from_user.first_name,
             message.from_user.last_name,
         )
-        print(args)
-        # user = await add_user(telegram_id, username, first_name, last_name)
-        # return user
+        user = await add_user(telegram_id, username, first_name, last_name)
+        user = await user
+        return user[0]

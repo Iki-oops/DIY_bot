@@ -10,14 +10,23 @@ from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
 from tgbot.handlers.admin import register_admin
 from tgbot.handlers.echo import register_echo
+from tgbot.handlers.operations_with_photo import register_get_photo_id
 from tgbot.handlers.searching_lessons import register_searching
 from tgbot.handlers.user import register_user
+from tgbot.integrations.telegraph.abstract import FileUploader
+from tgbot.integrations.telegraph.client import TelegraphService
 from tgbot.middlewares.environment import EnvironmentMiddleware
+from tgbot.middlewares.integrations import IntegrationMiddleware
 from tgbot.middlewares.users_manage import UsersManageMiddleware
 from tgbot.misc.set_bot_commands import set_default_commands
 from tgbot.misc.notify_admins import notify_admins
 
 logger = logging.getLogger(__name__)
+
+
+async def on_shutdown(dp: Dispatcher):
+    file_uploader: FileUploader = dp.bot["file_uploader"]
+    await file_uploader.close()
 
 
 def register_all_middlewares(dp, config):
@@ -32,6 +41,8 @@ def register_all_filters(dp):
 def register_all_handlers(dp):
     register_admin(dp)
     register_user(dp)
+    register_get_photo_id(dp)
+
     register_searching(dp)
 
     register_echo(dp)
@@ -44,13 +55,14 @@ async def main():
     )
     logger.info("Starting bot")
     config = load_config(".env")
-    # setup_django()
 
     storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
+    file_uploader = TelegraphService()
     dp = Dispatcher(bot, storage=storage)
-
+    dp.middleware.setup(IntegrationMiddleware(file_uploader))
     bot['config'] = config
+    bot['file_uploader'] = file_uploader
 
     register_all_middlewares(dp, config)
     register_all_filters(dp)
@@ -66,6 +78,7 @@ async def main():
         await dp.storage.close()
         await dp.storage.wait_closed()
         await bot.session.close()
+        await on_shutdown(dp)
 
 
 if __name__ == '__main__':

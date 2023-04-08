@@ -5,7 +5,7 @@ from .models import Lesson, StatusLesson, Profile
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'description', 'author', 'img_id', 'url',)
+    list_display = ('id', 'title', 'description', 'author', 'photo_id', 'url',)
     empty_value_display = '-- пусто --'
 
 
