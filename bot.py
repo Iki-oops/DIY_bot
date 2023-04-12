@@ -1,5 +1,4 @@
 import asyncio
-import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -9,6 +8,8 @@ import django_setup
 from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
 from tgbot.handlers.admin import register_admin
+from tgbot.handlers.catch_lesson_callbacks import register_handle_status_lesson
+from tgbot.handlers.catch_user_callbacks import register_catch_user_callbacks
 from tgbot.handlers.echo import register_echo
 from tgbot.handlers.operations_with_photo import register_get_photo_id
 from tgbot.handlers.searching_lessons import register_searching
@@ -17,11 +18,11 @@ from tgbot.integrations.telegraph.abstract import FileUploader
 from tgbot.integrations.telegraph.client import TelegraphService
 from tgbot.middlewares.environment import EnvironmentMiddleware
 from tgbot.middlewares.integrations import IntegrationMiddleware
+from tgbot.middlewares.lessons import GetLessonMiddleware
 from tgbot.middlewares.users_manage import UsersManageMiddleware
 from tgbot.misc.set_bot_commands import set_default_commands
 from tgbot.misc.notify_admins import notify_admins
-
-logger = logging.getLogger(__name__)
+from tgbot.services.logging import logger
 
 
 async def on_shutdown(dp: Dispatcher):
@@ -32,6 +33,7 @@ async def on_shutdown(dp: Dispatcher):
 def register_all_middlewares(dp, config):
     dp.setup_middleware(EnvironmentMiddleware(config=config))
     dp.setup_middleware(UsersManageMiddleware())
+    dp.setup_middleware(GetLessonMiddleware())
 
 
 def register_all_filters(dp):
@@ -42,17 +44,15 @@ def register_all_handlers(dp):
     register_admin(dp)
     register_user(dp)
     register_get_photo_id(dp)
+    register_catch_user_callbacks(dp)
+    register_handle_status_lesson(dp)
 
     register_searching(dp)
 
-    register_echo(dp)
+    # register_echo(dp)
 
 
 async def main():
-    logging.basicConfig(
-        level=logging.INFO,
-        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
-    )
     logger.info("Starting bot")
     config = load_config(".env")
 

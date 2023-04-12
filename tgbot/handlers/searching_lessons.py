@@ -1,40 +1,26 @@
 from aiogram import types, Dispatcher
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InputTextMessageContent
 
-from tgbot.models.db_commands import get_lessons
+from tgbot.models.db_commands import select_lessons
 
 
 async def searching(query: types.InlineQuery):
-    lessons = await get_lessons(query=query.query)
+    lessons = await select_lessons(query=query.query)
     results = []
     for lesson in lessons:
-        try:
-            results.append(
-                types.InlineQueryResultPhoto(
-                    id=str(lesson.id),
-                    photo_url=lesson.photo_id,
-                    thumb_url=lesson.photo_id,
-                    title=lesson.title,
-                    description=lesson.description,
-                    reply_markup=InlineKeyboardMarkup(
-                        row_width=2,
-                        inline_keyboard=[
-                            [
-                                InlineKeyboardButton('Кнопка', callback_data='button'),
-                            ]
-                        ]
-                    )
-                )
+        results.append(
+            types.InlineQueryResultArticle(
+                id=lesson.id,
+                thumb_url=lesson.photo_id,
+                input_message_content=InputTextMessageContent(
+                    message_text=f'lesson|{lesson.id}'),
+                title=lesson.title,
+                description=lesson.description,
             )
-        except Exception as error:
-            print(error)
-    print(results)
-    try:
-        await query.answer(
-            results=results,
         )
-    except Exception as err:
-        print(err)
+    await query.answer(
+        results=results,
+    )
 
 
 def register_searching(dp: Dispatcher):

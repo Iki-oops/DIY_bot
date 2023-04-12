@@ -60,6 +60,24 @@ class Profile(TimeBasedModel):
         return f'{self.username}'
 
 
+class Theme(TimeBasedModel):
+    class Meta:
+        verbose_name = 'Тема'
+        verbose_name_plural = 'Темы'
+
+    id = models.AutoField(
+        primary_key=True,
+    )
+    title = models.CharField(
+        verbose_name='Название группы',
+        max_length=100,
+        unique=True,
+    )
+
+    def __str__(self):
+        return f'{self.title}'
+
+
 class Lesson(TimeBasedModel):
     class Meta:
         ordering = ('-created_at', '-updated_at')
@@ -83,10 +101,9 @@ class Lesson(TimeBasedModel):
     description = models.TextField(
         'Описание урока',
     )
-    photo_id = models.CharField(
-        'Id картинки',
-        max_length=200,
-        default='AgACAgIAAxkBAAOlZDBAK24zrhv8PuXvI8Groa-CfGUAAqnFMRvKcIFJoV0paVg5cyQBAAMCAAN4AAMvBA',
+    photo_id = models.URLField(
+        'URL картинки',
+        default='https://telegra.ph//file/03f446be71d69a87288e6.jpg',
         null=True,
         blank=True,
     )
@@ -98,10 +115,37 @@ class Lesson(TimeBasedModel):
         return f'{self.author} - {self.title}'
 
 
+class LessonTheme(TimeBasedModel):
+    class Meta:
+        verbose_name = 'Урок с темой'
+        verbose_name_plural = 'Уроки с темой'
+        unique_together = ('lesson', 'theme')
+
+    id = models.AutoField(
+        primary_key=True,
+    )
+    lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        verbose_name='Урок',
+        related_name='themes',
+    )
+    theme = models.ForeignKey(
+        Theme,
+        on_delete=models.CASCADE,
+        verbose_name='Тема',
+        related_name='lessons',
+    )
+
+    def __str__(self):
+        return f'{self.lesson} в теме {self.theme}'
+
+
 class StatusLesson(TimeBasedModel):
     class Meta:
         verbose_name = 'Статус'
         verbose_name_plural = 'Статусы'
+        unique_together = ('profile', 'lesson')
 
     id = models.AutoField(
         primary_key=True,

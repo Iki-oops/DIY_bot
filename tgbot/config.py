@@ -20,7 +20,10 @@ class TgBot:
 
 @dataclass
 class Miscellaneous:
-    other_params: str = None
+    face_photo: str = 'https://telegra.ph//file/f8351e71d66180523bfd2.jpg'
+    themes_photo: str = 'https://telegra.ph//file/f826a8ed3042fd83b65d1.jpg'
+    profile_photo: str = 'https://telegra.ph//file/553a18cb2ce2d147cd51c.jpg'
+    lessons_photo: str = 'https://telegra.ph//file/0d8560044d83797c0a9ae.jpg'
 
 
 @dataclass
