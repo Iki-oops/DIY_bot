@@ -1,8 +1,22 @@
-from tg_django.tg_manage.models import Profile, StatusLesson, Lesson
+from tg_django.tg_manage.models import StatusLesson, Lesson
 
 
-def change_inline_markup_status(status: StatusLesson,
-                                query_status: str):
+def prepare_default_data(callback_data: dict, key='', topic='',
+                         lesson_id='', page='', query_status='',
+                         level=1, category='', prefix=''):
+    data = {
+        'key': key, 'topic': topic, 'lesson_id': lesson_id,
+        'page': page, 'query_status': query_status, 'level': level,
+        'category': category, '@': prefix,
+    }
+    for item in callback_data:
+        if item:
+            data[item] = callback_data[item]
+    return data
+
+
+def change_status(status: StatusLesson,
+                  query_status: str):
     """
     Меняет булевые поля в базе данных при нажатии пользователем
     (favorite, started, finished).
@@ -73,7 +87,7 @@ def to_caption(lesson: Lesson):
         f'<b>{lesson.title}</b>\n'
         f'Темы: <b>{themes_text}</b>\n\n'
         f'{lesson.description}\n\n'
-        f'Добавили в избранное <b>{favorites} {counts}</b> ⭐️⭐️⭐️'
+        f'Добавили в избранное <b>{favorites} {counts}</b> ⭐️'
     )
 
     return result

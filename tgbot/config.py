@@ -16,14 +16,14 @@ class TgBot:
     token: str
     admin_ids: list[int]
     use_redis: bool
+    bot_id: int
 
 
 @dataclass
 class Miscellaneous:
     face_photo: str = 'https://telegra.ph//file/f8351e71d66180523bfd2.jpg'
-    themes_photo: str = 'https://telegra.ph//file/f826a8ed3042fd83b65d1.jpg'
+    themes_photo: str = 'https://telegra.ph//file/d94839ef8fd32164e78ce.jpg'
     profile_photo: str = 'https://telegra.ph//file/553a18cb2ce2d147cd51c.jpg'
-    lessons_photo: str = 'https://telegra.ph//file/0d8560044d83797c0a9ae.jpg'
 
 
 @dataclass
@@ -42,6 +42,7 @@ def load_config(path: str = None):
             token=env.str("BOT_TOKEN"),
             admin_ids=list(map(int, env.list("ADMINS"))),
             use_redis=env.bool("USE_REDIS"),
+            bot_id=env.int("BOT_ID")
         ),
         db=DbConfig(
             host=env.str('DB_HOST'),

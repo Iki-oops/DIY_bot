@@ -1,40 +1,103 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from django.core.paginator import Page
 
-from tgbot.keyboards.callback_datas import status_of_lesson_callback_data
+from tg_django.tg_manage.models import StatusLesson
+from tgbot.keyboards.callback_datas import (
+    make_lesson_callback_data
+)
 
 
-def live_status_inline_keyboard(status,
-                                lesson_id,
-                                markup: InlineKeyboardMarkup) -> InlineKeyboardMarkup:
+def add_pagination_inline_keyboard(data: dict,
+                                   markup: InlineKeyboardMarkup,
+                                   back_keyboard: InlineKeyboardButton,
+                                   curr_page: Page) -> InlineKeyboardMarkup:
+    key, topic = data.get('key'), data.get('topic')
+    prev_page = ''
+    prev_page_text = '!<'
+    prev_callback_data = make_lesson_callback_data(
+        key=key, page=prev_page, topic=topic
+    )
+
+    next_page = curr_page.number
+    next_page_text = '!>'
+    next_callback_data = make_lesson_callback_data(
+        key=key, page=next_page, topic=topic
+    )
+
+    if curr_page.has_previous():
+        prev_page = curr_page.previous_page_number()
+        prev_page_text = '<'
+        prev_callback_data = make_lesson_callback_data(
+            key=key, page=prev_page, topic=topic
+        )
+
+    if curr_page.has_next():
+        next_page = curr_page.next_page_number()
+        next_page_text = '>'
+        next_callback_data = make_lesson_callback_data(
+            key=key, page=next_page, topic=topic
+        )
+
+    markup.row(
+        InlineKeyboardButton(
+            text=prev_page_text,
+            callback_data=prev_callback_data,
+        ),
+        back_keyboard,
+        InlineKeyboardButton(
+            text=next_page_text,
+            callback_data=next_callback_data,
+        )
+    )
+
+    return markup
+
+
+def live_status_inline_keyboard(markup: InlineKeyboardMarkup,
+                                callback_data: dict,
+                                status: StatusLesson) -> InlineKeyboardMarkup:
     """
     Кнопки, которые менют статус урока и показывают актуальный статус
     """
-    started, favorite, finished = 'Начато ', 'В избранном ', 'Закончено '
-    started += '🔴' if not status.started else '🟢'
-    favorite += '🔴' if not status.favorite else '🟢'
-    finished += '🔴' if not status.finished else '🟢'
+
+    key, lesson_id, topic, page = (
+        callback_data.get('key'), callback_data.get('lesson_id'),
+        callback_data.get('topic'), callback_data.get('page')
+    )
+    started = 'Начать' if not status.started else 'Начал'
+    favorite = 'Добавить в избранное' if not status.favorite else 'Добавлено в избранное'
+    finished = 'Закончить' if not status.finished else 'Закончил'
     markup.row(
         InlineKeyboardButton(
             text=started,
-            callback_data=status_of_lesson_callback_data.new(
+            callback_data=make_lesson_callback_data(
+                key=key,
+                topic=topic,
+                page=page,
                 lesson_id=lesson_id,
-                status='started'
+                query_status='started'
             )
         ),
         InlineKeyboardButton(
             text=finished,
-            callback_data=status_of_lesson_callback_data.new(
+            callback_data=make_lesson_callback_data(
+                key=key,
+                topic=topic,
+                page=page,
                 lesson_id=lesson_id,
-                status='finished'
+                query_status='finished'
             )
         )
     )
     markup.row(
         InlineKeyboardButton(
             text=favorite,
-            callback_data=status_of_lesson_callback_data.new(
+            callback_data=make_lesson_callback_data(
+                key=key,
+                topic=topic,
+                page=page,
                 lesson_id=lesson_id,
-                status='favorite'
+                query_status='favorite'
             )
         ),
     )
