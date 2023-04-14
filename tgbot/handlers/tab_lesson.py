@@ -6,10 +6,16 @@ from django.db.models import QuerySet
 
 from tg_django.tg_manage.models import Lesson
 from tgbot.keyboards.inline_keyboards import pagination_lesson_keyboards
-from tgbot.misc.utils import to_caption, response_for_callback_status, \
+from tgbot.misc.utils import (
+    to_caption,
+    response_for_callback_status,
     change_status
-from tgbot.models.db_commands import get_lesson, get_user, \
+)
+from tgbot.models.db_commands import (
+    get_lesson,
+    get_user,
     get_or_create_status_lesson
+)
 
 
 async def get_tab_lesson(call: types.CallbackQuery,
@@ -17,11 +23,11 @@ async def get_tab_lesson(call: types.CallbackQuery,
                          lessons: QuerySet[Lesson]):
     page, prefix = data.get('page'), data.get('@')
     query_status = data.get('query_status')
-    # print(data)
 
     pagination = Paginator(lessons, 1)
     curr_page = pagination.get_page(page)
     lesson = curr_page.object_list[0]
+    caption = to_caption(lesson)
 
     if query_status and query_status != '0':
         query_status = data.get('query_status')
@@ -39,7 +45,12 @@ async def get_tab_lesson(call: types.CallbackQuery,
             status=status_of_lesson,
             query_status=query_status,
         )
-        await call.message.edit_reply_markup(
+
+        await call.message.edit_media(
+            media=InputMediaPhoto(
+                media=lesson.photo_id,
+                caption=caption,
+            ),
             reply_markup=await pagination_lesson_keyboards(
                 data, call.from_user.id, curr_page
             )
@@ -47,7 +58,6 @@ async def get_tab_lesson(call: types.CallbackQuery,
         return
 
     await call.answer()
-    caption = to_caption(lesson)
 
     try:
         await call.message.edit_media(

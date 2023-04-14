@@ -22,7 +22,7 @@ class TgBot:
 @dataclass
 class Miscellaneous:
     face_photo: str = 'https://telegra.ph//file/f8351e71d66180523bfd2.jpg'
-    themes_photo: str = 'https://telegra.ph//file/d94839ef8fd32164e78ce.jpg'
+    themes_photo: str = 'https://telegra.ph//file/0f38db75a3993481f0efd.jpg'
     profile_photo: str = 'https://telegra.ph//file/553a18cb2ce2d147cd51c.jpg'
 
 

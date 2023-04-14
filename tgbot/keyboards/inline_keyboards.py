@@ -1,3 +1,5 @@
+from typing import Optional
+
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from django.core.paginator import Page
 
@@ -41,15 +43,17 @@ def start_inline_keyboard() -> InlineKeyboardMarkup:
     return markup
 
 
-async def category_inline_keyboard(category: str) -> InlineKeyboardMarkup:
+def category_inline_keyboard(data: dict,
+                             curr_page: Optional[Page] = None
+                             ) -> InlineKeyboardMarkup:
     CURRENT_LEVEL = 1
 
     markup = InlineKeyboardMarkup(row_width=4)
+    category = data.get('category')
 
     if category == 'themes':
-        themes = await get_themes()
         markup = make_themes_dynamic_inline(
-            markup, themes, CURRENT_LEVEL, category
+            markup, curr_page, CURRENT_LEVEL, data
         )
     elif category == 'profile':
         markup.row(
@@ -81,14 +85,14 @@ async def category_inline_keyboard(category: str) -> InlineKeyboardMarkup:
             )
         )
 
-    markup.row(
-        InlineKeyboardButton(
-            text='Назад',
-            callback_data=make_menu_callback_data(
-                level=CURRENT_LEVEL - 1,
+        markup.row(
+            InlineKeyboardButton(
+                text='Назад',
+                callback_data=make_menu_callback_data(
+                    level=CURRENT_LEVEL - 1,
+                )
             )
         )
-    )
     return markup
 
 

@@ -2,7 +2,13 @@ from asgiref.sync import sync_to_async
 from django.db import IntegrityError
 from django.db.models import Count, Q
 
-from tg_django.tg_manage.models import Profile, StatusLesson, Lesson, Theme
+from tg_django.tg_manage.models import (
+    Profile,
+    StatusLesson,
+    Lesson,
+    Theme,
+    Photo
+)
 from tgbot.services.logging import logger
 
 
@@ -46,12 +52,13 @@ def get_lesson(pk: int):
     return Lesson.objects.select_related().get(id=pk)
 
 
-# Добавить сортировку по favorites, ordering_by
+# Добавить сортировку по favorites, order_by
+# Неправильный запрос
 @sync_to_async
 def get_top_lessons():
     lessons = Lesson.objects.annotate(
-        status_users_count=Count('status_users__favorite')
-    ).order_by('status_users_count')
+        status_users_count=Count('id', filter=Q(status_users__favorite=True))
+    ).order_by('-status_users_count')
     return lessons
 
 
@@ -70,7 +77,7 @@ def get_or_create_status_lesson(user, lesson):
 
 @sync_to_async
 def get_themes():
-    return Theme.objects.all()
+    return Theme.objects.all().order_by('-updated_at', '-created_at')
 
 
 @sync_to_async
@@ -101,3 +108,8 @@ def get_status_lessons(status: str, telegram_id: int):
             Q(status_users__profile=user) & Q(status_users__finished=True)
         )
     return lessons
+
+
+@sync_to_async
+def get_or_create_photo(url, category):
+    return Photo.objects.get_or_create(photo_url=url, category=category)

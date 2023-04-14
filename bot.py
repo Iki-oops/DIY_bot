@@ -15,6 +15,7 @@ from tgbot.handlers.start_menu_callbacks import register_catch_user_callbacks
 from tgbot.handlers.echo import register_echo
 from tgbot.handlers.operations_with_photo import register_get_photo_id
 from tgbot.handlers.searching_lessons import register_searching
+from tgbot.handlers.theme_callbacks import register_handle_themes_or_profile
 from tgbot.handlers.user import register_user
 from tgbot.integrations.telegraph.abstract import FileUploader
 from tgbot.integrations.telegraph.client import TelegraphService
@@ -47,6 +48,7 @@ def register_all_handlers(dp):
     register_get_photo_id(dp)
     register_catch_user_callbacks(dp)
     register_catch_lesson_after_inline_mode(dp)
+    register_handle_themes_or_profile(dp)
     register_handle_lesson(dp)
 
     register_searching(dp)

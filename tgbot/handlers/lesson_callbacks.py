@@ -1,4 +1,5 @@
 from aiogram import types, Dispatcher
+from django.core.cache import cache
 
 from tg_django.tg_manage.models import Profile
 from tgbot.handlers.tab_lesson import get_tab_lesson
@@ -14,7 +15,8 @@ from tgbot.models.db_commands import (
     get_or_create_status_lesson,
     get_lesson,
     get_top_lessons,
-    get_theme_lessons, get_status_lessons,
+    get_theme_lessons,
+    get_status_lessons,
 )
 
 
@@ -46,7 +48,11 @@ async def handle_theme_lessons(call: types.CallbackQuery, callback_data: dict):
 async def handle_trend_lessons(call: types.CallbackQuery,
                                callback_data: dict):
     await call.answer()
-    lessons = await get_top_lessons()
+    lessons = cache.get('lessons')
+    if not lessons:
+        lessons = await get_top_lessons()
+        cache.set('lessons', lessons, 300)
+
     data = prepare_default_data(callback_data, key='trend_lessons', page=1)
     await get_tab_lesson(call, data, lessons)
 

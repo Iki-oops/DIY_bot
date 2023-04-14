@@ -13,5 +13,7 @@ class IntegrationMiddleware(LifetimeControllerMiddleware):
         super().__init__()
         self._uploader = uploader
 
-    async def pre_process(self, obj: TelegramObject, data: Dict[Any, Any], *args: Any):
+    async def pre_process(self, obj: TelegramObject,
+                          data: Dict[Any, Any],
+                          *args: Any):
         data['file_uploader'] = self._uploader

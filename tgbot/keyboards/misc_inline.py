@@ -11,31 +11,33 @@ def add_pagination_inline_keyboard(data: dict,
                                    markup: InlineKeyboardMarkup,
                                    back_keyboard: InlineKeyboardButton,
                                    curr_page: Page) -> InlineKeyboardMarkup:
-    key, topic = data.get('key'), data.get('topic')
+    key, topic, category = (
+        data.get('key'), data.get('topic'), data.get('category')
+    )
     prev_page = ''
     prev_page_text = '!<'
     prev_callback_data = make_lesson_callback_data(
-        key=key, page=prev_page, topic=topic
+        key=key, page=prev_page, topic=topic, category=category
     )
 
     next_page = curr_page.number
     next_page_text = '!>'
     next_callback_data = make_lesson_callback_data(
-        key=key, page=next_page, topic=topic
+        key=key, page=next_page, topic=topic, category=category
     )
 
     if curr_page.has_previous():
         prev_page = curr_page.previous_page_number()
         prev_page_text = '<'
         prev_callback_data = make_lesson_callback_data(
-            key=key, page=prev_page, topic=topic
+            key=key, page=prev_page, topic=topic, category=category
         )
 
     if curr_page.has_next():
         next_page = curr_page.next_page_number()
         next_page_text = '>'
         next_callback_data = make_lesson_callback_data(
-            key=key, page=next_page, topic=topic
+            key=key, page=next_page, topic=topic, category=category
         )
 
     markup.row(

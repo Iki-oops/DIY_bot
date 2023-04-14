@@ -17,7 +17,7 @@ class TelegraphService(FileUploader):
 
     async def upload_photo(self, photo: PhotoSize) -> UploadedFile:
         form = aiohttp.FormData(quote_fields=False)
-        downloaded_photo = await photo.download(destination=BytesIO())
+        downloaded_photo = await photo.download(destination_file=BytesIO())
         form.add_field(secrets.token_urlsafe(8), downloaded_photo)
         session = await self.get_session()
         response = await session.post(
@@ -26,7 +26,8 @@ class TelegraphService(FileUploader):
         )
         if not response.ok:
             raise TelegraphAPIError(
-                "Something went wrong, response from telegraph is not successful. "
+                "Something went wrong, response from "
+                "telegraph is not successful. "
                 f"Response: {response}"
             )
         json_response = await response.json()

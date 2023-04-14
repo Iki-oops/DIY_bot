@@ -18,6 +18,27 @@ class TimeBasedModel(models.Model):
     )
 
 
+class Photo(models.Model):
+    class Meta:
+        verbose_name = 'Изображение'
+        verbose_name_plural = 'Изображения'
+
+    id = models.AutoField(
+        primary_key=True,
+    )
+    photo_url = models.URLField(
+        verbose_name='URL-изображения',
+        unique=True,
+    )
+    category = models.CharField(
+        verbose_name='Категория изображения',
+        max_length=100,
+    )
+
+    def __str__(self):
+        return self.photo_url
+
+
 class Profile(TimeBasedModel):
     class Meta:
         verbose_name = 'Пользователь'

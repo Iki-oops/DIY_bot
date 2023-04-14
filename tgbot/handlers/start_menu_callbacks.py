@@ -2,7 +2,8 @@ from aiogram import types, Dispatcher
 
 from tgbot.handlers.lesson_callbacks import (
     handle_trend_lessons,
-    handle_theme_lessons, handle_profile_lessons,
+    handle_theme_lessons,
+    handle_profile_lessons,
 )
 from tgbot.handlers.theme_callbacks import handle_themes_or_profile
 from tgbot.handlers.user import user_start
