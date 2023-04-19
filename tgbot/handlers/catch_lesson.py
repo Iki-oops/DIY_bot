@@ -2,7 +2,7 @@ from aiogram import types, Dispatcher
 from django.db import IntegrityError
 
 from tgbot.keyboards.inline_keyboards import default_lesson_keyboards
-from tgbot.misc.utils import to_caption
+from tgbot.misc.utils import to_caption, prepare_default_data
 from tgbot.models.db_commands import (
     get_lesson,
     get_or_create_user,
@@ -33,11 +33,9 @@ async def catch_lesson_after_inline_mode(message: types.Message):
 
         data = {
             'key': 'inline_mode_lesson',
-            'topic': '0',
             'lesson_id': lesson.id,
-            'page': '0',
-            'query_status': '0',
         }
+        data = prepare_default_data(callback_data=data)
 
         await message.answer_photo(
             photo=lesson.photo_id,

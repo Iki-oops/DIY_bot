@@ -3,6 +3,7 @@ from django.core.cache import cache
 
 from tg_django.tg_manage.models import Profile
 from tgbot.handlers.tab_lesson import get_tab_lesson
+from tgbot.handlers.updating_profile_photo import update_profile_photo
 from tgbot.keyboards.callback_datas import lesson_callback_data
 from tgbot.keyboards.inline_keyboards import (
     default_lesson_keyboards,
@@ -16,7 +17,7 @@ from tgbot.models.db_commands import (
     get_lesson,
     get_top_lessons,
     get_theme_lessons,
-    get_status_lessons,
+    get_status_lessons
 )
 
 
@@ -27,10 +28,13 @@ async def handle_profile_lessons(call: types.CallbackQuery,
         callback_data, key='profile_lessons', level=2, category='profile'
     )
     lessons = await get_status_lessons(topic, call.from_user.id)
-    if lessons:
-        await get_tab_lesson(call, data, lessons)
+    if topic == 'set_profile':
+        await update_profile_photo(call, data)
     else:
-        await call.answer('Нет уроков')
+        if lessons:
+            await get_tab_lesson(call, data, lessons)
+        else:
+            await call.answer('Нет уроков')
 
 
 async def handle_theme_lessons(call: types.CallbackQuery, callback_data: dict):

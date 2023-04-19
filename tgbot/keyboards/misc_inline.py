@@ -62,12 +62,14 @@ def live_status_inline_keyboard(markup: InlineKeyboardMarkup,
     Кнопки, которые менют статус урока и показывают актуальный статус
     """
 
-    key, lesson_id, topic, page = (
+    key, lesson_id, topic, page, category = (
         callback_data.get('key'), callback_data.get('lesson_id'),
-        callback_data.get('topic'), callback_data.get('page')
+        callback_data.get('topic'), callback_data.get('page'),
+        callback_data.get('category')
     )
     started = 'Начать' if not status.started else 'Начал'
-    favorite = 'Добавить в избранное' if not status.favorite else 'Добавлено в избранное'
+    favorite = 'Добавить в избранное'\
+        if not status.favorite else 'Добавлено в избранное'
     finished = 'Закончить' if not status.finished else 'Закончил'
     markup.row(
         InlineKeyboardButton(
@@ -77,7 +79,8 @@ def live_status_inline_keyboard(markup: InlineKeyboardMarkup,
                 topic=topic,
                 page=page,
                 lesson_id=lesson_id,
-                query_status='started'
+                query_status='started',
+                category=category,
             )
         ),
         InlineKeyboardButton(
@@ -87,7 +90,8 @@ def live_status_inline_keyboard(markup: InlineKeyboardMarkup,
                 topic=topic,
                 page=page,
                 lesson_id=lesson_id,
-                query_status='finished'
+                query_status='finished',
+                category=category,
             )
         )
     )
@@ -99,7 +103,8 @@ def live_status_inline_keyboard(markup: InlineKeyboardMarkup,
                 topic=topic,
                 page=page,
                 lesson_id=lesson_id,
-                query_status='favorite'
+                query_status='favorite',
+                category=category,
             )
         ),
     )

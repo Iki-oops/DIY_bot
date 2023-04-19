@@ -1,7 +1,10 @@
 from aiogram import types
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
-from tgbot.models.db_commands import get_or_create_user
+from tgbot.models.db_commands import (
+    get_or_create_user,
+    get_or_create_user_pack
+)
 
 
 class UsersManageMiddleware(BaseMiddleware):
@@ -12,6 +15,7 @@ class UsersManageMiddleware(BaseMiddleware):
             message.from_user.first_name,
             message.from_user.last_name,
         )
+        await get_or_create_user_pack(message.from_user.id, 8)
         data['user'] = user
 
     async def on_process_callback_query(self, call: types.CallbackQuery,
@@ -22,4 +26,5 @@ class UsersManageMiddleware(BaseMiddleware):
             call.from_user.first_name,
             call.from_user.last_name,
         )
+        await get_or_create_user_pack(call.from_user.id, 8)
         data['user'] = user

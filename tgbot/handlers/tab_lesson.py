@@ -41,6 +41,7 @@ async def get_tab_lesson(call: types.CallbackQuery,
         await call.answer(
             response_for_callback_status(status_of_lesson, query_status)
         )
+
         change_status(
             status=status_of_lesson,
             query_status=query_status,

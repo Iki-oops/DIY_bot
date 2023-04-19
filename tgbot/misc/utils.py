@@ -3,11 +3,11 @@ from tg_django.tg_manage.models import StatusLesson, Lesson
 
 def prepare_default_data(callback_data: dict, key='', topic='',
                          lesson_id='', page='', query_status='',
-                         level=1, category='', prefix=''):
+                         level=1, category='', prefix='', item_id=''):
     data = {
         'key': key, 'topic': topic, 'lesson_id': lesson_id,
         'page': page, 'query_status': query_status, 'level': level,
-        'category': category, '@': prefix,
+        'category': category, '@': prefix, 'item_id': item_id,
     }
     for item in callback_data:
         if item:

@@ -8,6 +8,7 @@ from tgbot.keyboards.dynamic_inline_keyboards import make_themes_dynamic_inline
 from tgbot.keyboards.misc_inline import (
     live_status_inline_keyboard, add_pagination_inline_keyboard,
 )
+from tgbot.keyboards.profile_inline_keyboards import profile_inline_keyboard
 from tgbot.models.db_commands import (
     get_themes,
     get_user,
@@ -56,42 +57,8 @@ def category_inline_keyboard(data: dict,
             markup, curr_page, CURRENT_LEVEL, data
         )
     elif category == 'profile':
-        markup.row(
-            InlineKeyboardButton(
-                text='Начатые 🥶',
-                callback_data=make_menu_callback_data(
-                    level=CURRENT_LEVEL + 1,
-                    category=category,
-                    topic='started',
-                )
-            ),
-            InlineKeyboardButton(
-                text='Законченные 🥵',
-                callback_data=make_menu_callback_data(
-                    level=CURRENT_LEVEL + 1,
-                    category=category,
-                    topic='finished',
-                )
-            )
-        )
-        markup.row(
-            InlineKeyboardButton(
-                text='В избранном 🥰',
-                callback_data=make_menu_callback_data(
-                    level=CURRENT_LEVEL + 1,
-                    category=category,
-                    topic='favorite',
-                )
-            )
-        )
-
-        markup.row(
-            InlineKeyboardButton(
-                text='Назад',
-                callback_data=make_menu_callback_data(
-                    level=CURRENT_LEVEL - 1,
-                )
-            )
+        markup = profile_inline_keyboard(
+            markup, data, CURRENT_LEVEL,
         )
     return markup
 

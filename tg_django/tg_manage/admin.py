@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Lesson, StatusLesson, Profile, Theme, LessonTheme, Photo
+from .models import Lesson, StatusLesson, Profile, Theme, LessonTheme, Photo, \
+    PhotoPack, ProfilePhotoPack
 
 
 @admin.register(Lesson)
@@ -35,5 +36,17 @@ class LessonThemeAdmin(admin.ModelAdmin):
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'photo_url', 'category')
+    list_display = ('id', 'photo_url', 'type_photo', 'photo_pack')
+    empty_value_display = '-- пусто --'
+
+
+@admin.register(PhotoPack)
+class PhotoPackAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name',)
+    empty_value_display = '-- пусто --'
+
+
+@admin.register(ProfilePhotoPack)
+class ProfilePhotoPackAdmin(admin.ModelAdmin):
+    list_display = ('id', 'profile', 'photo_pack')
     empty_value_display = '-- пусто --'

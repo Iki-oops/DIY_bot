@@ -7,7 +7,7 @@ from tg_django.tg_manage.models import (
     StatusLesson,
     Lesson,
     Theme,
-    Photo
+    Photo, PhotoPack, ProfilePhotoPack
 )
 from tgbot.services.logging import logger
 
@@ -43,7 +43,7 @@ def select_lessons(query=''):
         Q(author__last_name__contains=query) |
         Q(title__contains=query) |
         Q(description__contains=query)
-    )
+    ).order_by('-updated_at', '-created_at')
     return lessons
 
 
@@ -111,5 +111,50 @@ def get_status_lessons(status: str, telegram_id: int):
 
 
 @sync_to_async
-def get_or_create_photo(url, category):
-    return Photo.objects.get_or_create(photo_url=url, category=category)
+def get_or_create_photo(url: str, type_photo: str, photo_pack: PhotoPack):
+    return Photo.objects.get_or_create(
+        photo_url=url, type_photo=type_photo, photo_pack=photo_pack
+    )
+
+
+@sync_to_async
+def get_or_create_user_pack(telegram_id, pack_id):
+    user = Profile.objects.get(telegram_id=telegram_id)
+    pack = PhotoPack.objects.get(id=pack_id)
+    return ProfilePhotoPack.objects.get_or_create(
+        profile=user, photo_pack=pack)
+
+
+@sync_to_async
+def get_photo_packs():
+    return PhotoPack.objects.all().order_by('-updated_at')
+
+
+@sync_to_async
+def get_photo_packs_without_user_pack(user_pack: PhotoPack):
+    return PhotoPack.objects.exclude(id=user_pack.id).order_by('-updated_at')
+
+
+@sync_to_async
+def get_or_create_photo_pack(name):
+    return PhotoPack.objects.get_or_create(name=name)
+
+
+@sync_to_async
+def get_photo_pack(pk):
+    return PhotoPack.objects.get(id=pk)
+
+
+@sync_to_async
+def get_photo_via_type_photo(telegram_id: int, type_photo):
+    user_pack = Profile.objects.get(
+        telegram_id=telegram_id)
+    user_pack = user_pack.photo_pack.first()
+    return Photo.objects.get(
+        photo_pack=user_pack.photo_pack, type_photo=type_photo).photo_url
+
+
+@sync_to_async
+def get_user_pack(telegram_id: int):
+    user = Profile.objects.get(telegram_id=telegram_id)
+    return user.photo_pack.first()

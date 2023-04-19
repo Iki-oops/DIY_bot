@@ -24,6 +24,8 @@ class Miscellaneous:
     face_photo: str = 'https://telegra.ph//file/f8351e71d66180523bfd2.jpg'
     themes_photo: str = 'https://telegra.ph//file/0f38db75a3993481f0efd.jpg'
     profile_photo: str = 'https://telegra.ph//file/553a18cb2ce2d147cd51c.jpg'
+    set_profile_photo: str = ('https://telegra.ph//file/'
+                              'edad374788945f4e3614d.jpg')
 
 
 @dataclass
