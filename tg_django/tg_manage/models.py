@@ -43,7 +43,8 @@ class Profile(TimeBasedModel):
         'Псевдоним',
         max_length=100,
         unique=True,
-        null=True
+        null=True,
+        blank=True
     )
     email = models.EmailField(
         'Почта',
@@ -57,7 +58,9 @@ class Profile(TimeBasedModel):
     )
 
     def __str__(self):
-        return f'{self.username}'
+        if self.username:
+            return f'{self.username}'
+        return f'{self.first_name} {self.last_name}'
 
 
 class Theme(TimeBasedModel):

@@ -121,8 +121,11 @@ def get_or_create_photo(url: str, type_photo: str, photo_pack: PhotoPack):
 def get_or_create_user_pack(telegram_id, pack_id):
     user = Profile.objects.get(telegram_id=telegram_id)
     pack = PhotoPack.objects.get(id=pack_id)
-    return ProfilePhotoPack.objects.get_or_create(
-        profile=user, photo_pack=pack)
+    try:
+        return ProfilePhotoPack.objects.get_or_create(
+            profile=user, photo_pack=pack)
+    except Exception:
+        return ProfilePhotoPack.objects.get(profile=user)
 
 
 @sync_to_async
